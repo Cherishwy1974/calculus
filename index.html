@@ -965,11 +965,14 @@
     </main>
 
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-    <script>
+   <script>
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const mainContent = document.getElementById('main-content');
         const contentFrame = document.getElementById('content-frame');
+
+        let clickCount = 0;
+        let lastClicked = null;
 
         sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('hidden');
@@ -980,11 +983,27 @@
             link.addEventListener('click', (event) => {
                 event.preventDefault();
                 const url = link.getAttribute('data-url');
-                contentFrame.setAttribute('src', url);
+
+                if (lastClicked === url) {
+                    clickCount++;
+                } else {
+                    clickCount = 1;
+                    lastClicked = url;
+                }
+
+                if (clickCount === 1) {
+                    contentFrame.setAttribute('src', url);
+                } else if (clickCount === 2) {
+                    window.location.href = url;
+                }
+
+                setTimeout(() => {
+                    clickCount = 0;
+                    lastClicked = null;
+                }, 500); // Reset after 500ms
             });
         });
     </script>
-   
 
 </body>
 </html>
