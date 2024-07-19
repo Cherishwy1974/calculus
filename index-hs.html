@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>函数演示页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff00;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            width: 700px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .input-area, .expression-area, .result-area {
+            margin-bottom: 20px;
+        }
+        .machine-container {
+            position: relative;
+            width: 100%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .machine-area {
+            position: relative;
+            width: 500px;
+            height: 300px;
+            background: url('图片3.png') no-repeat center center;
+            background-size: contain;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .gear {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: #c8e6c900;
+            box-shadow: 10px 10px 10px #a5d6a700, -10px -10px 20px #ffffff;
+            border-radius: 50%;
+        }
+        #gear1 {
+            top: 50%;
+            left: 25%;
+            transform: translate(-50%, -50%);
+            background: url('图片1.png') no-repeat center center;
+            background-size: contain;
+            animation: spin 4s linear infinite reverse paused;
+        }
+        #gear2 {
+            top: 50%;
+            right: 35%;
+            transform: translate(50%, -50%);
+            background: url('图片1.png') no-repeat center center;
+            background-size: contain;
+            animation: spin 4s linear infinite paused;
+        }
+        .spinning {
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .number-enter {
+            color: #1de223;
+            position: absolute;
+            font-size: 4em;
+            animation: flyIn 2s forwards;
+        }
+        @keyframes flyIn {
+    0% { left: 0; top: 50%; opacity: 1; }
+    100% { left: calc(100% - 90px); top: 50%; opacity: 0; }
+}
+
+        .examples {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .example {
+            background: #a5d6a7;
+            box-shadow: 10px 10px 20px #a5d6a700, -10px -10px 20px #ffffff;
+            border: 1px solid #a5d6a7;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .example:hover {
+            background-color: #a5d6a7;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .input-port, .output-port {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border: 2px solid #a5d6a7;
+            background: #fefffe;
+            box-shadow: 10px 10px 20px #d9dcd9, -10px -10px 20px #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            border-radius: 50%;
+        }
+        .input-port {
+            top: 50%;
+            left: -30px;
+            transform: translateY(-50%);
+        }
+        .output-port {
+            top: 50%;
+            right: -30px;
+            transform: translateY(-50%);
+        }
+        .result-area p {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        label {
+            font-size: 1em;
+            color: #555;
+        }
+        input[type="number"], input[type="text"] {
+            width: calc(100% - 24px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-size: 1em;
+            box-shadow: inset 5px 5px 10px #d1e5db00, inset -5px -5px 10px #ffffff;
+            box-sizing: border-box;
+        }
+        input[type="number"]:focus, input[type="text"]:focus {
+            border-color: #888;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>函数演示页面</h1>
+        <div class="expression-area">
+            <label for="expression-input">输入表达式 (使用x作为变量):</label>
+            <input type="text" id="expression-input" placeholder="-x + 1" />
+            <div class="examples">
+                <div class="example" data-expression="-x + 1">-x + 1</div>
+                <div class="example" data-expression="x + 2">x + 2</div>
+                <div class="example" data-expression="x - 3">x - 3</div>
+                <div class="example" data-expression="x * 4">x * 4</div>
+                <div class="example" data-expression="x / 5">x / 5</div>
+            </div>
+        </div>
+        <div class="input-area">
+            <label for="input-number">输入你的数字点回车:</label>
+            <input type="number" id="input-number" placeholder="输入一个数" />
+        </div>
+        <div class="machine-container">
+            <div class="input-port">入口</div>
+            <div class="machine-area" id="machine-area">
+                <div class="gear" id="gear1"></div>
+                <div class="gear" id="gear2"></div>
+            </div>
+            <div class="output-port">出口</div>
+        </div>
+        <div class="result-area">
+            <p>输出结果（y值）: <span id="output-result">-</span></p>
+        </div>
+    </div>
+    <script>
+        const inputNumber = document.getElementById('input-number');
+        const expressionInput = document.getElementById('expression-input');
+        const outputResult = document.getElementById('output-result');
+        const gears = document.querySelectorAll('.gear');
+        const machineArea = document.getElementById('machine-area');
+        const examples = document.querySelectorAll('.example');
+
+        examples.forEach(example => {
+            example.addEventListener('click', function() {
+                expressionInput.value = this.getAttribute('data-expression');
+            });
+        });
+
+        inputNumber.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                let x = parseFloat(event.target.value);
+                let expression = expressionInput.value;
+                let result;
+                try {
+                    result = eval(expression.replace(/x/g, x));
+                } catch (error) {
+                    result = '错误的表达式';
+                }
+
+                const numberDisplay = document.createElement('div');
+                numberDisplay.textContent = x;
+                numberDisplay.classList.add('number-enter');
+                machineArea.appendChild(numberDisplay);
+
+                // Start spinning the gears
+                gears.forEach(gear => gear.style.animationPlayState = 'running');
+
+                setTimeout(() => {
+                    numberDisplay.remove();
+                    outputResult.textContent = result;
+                    gears.forEach(gear => gear.style.animationPlayState = 'paused');
+
+                    const resultDisplay = document.createElement('div');
+                    resultDisplay.textContent = result;
+                    resultDisplay.classList.add('number-enter');
+                    resultDisplay.style.left = 'calc(100% - 90px)';
+                    resultDisplay.style.animationName = 'none';
+                    machineArea.appendChild(resultDisplay);
+
+                    setTimeout(() => {
+                        resultDisplay.remove();
+                    }, 2000);
+                }, 2000);
+            }
+        });
+
+        // Initially pause the gear animations
+        gears.forEach(gear => gear.style.animationPlayState = 'paused');
+    </script>
+</body>
+</html>
