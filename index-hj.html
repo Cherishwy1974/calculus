@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自变量变换趋势</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f0f0f000, #c8d6e500);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 18px;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 600px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        .number-line {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            position: relative;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .draggable {
+            width: 20px;
+            height: 20px;
+            background: #ff4757;
+            position: absolute;
+            top: -5px;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background 0.2s;
+        }
+        .draggable:hover {
+            background: #e84118;
+        }
+        .label {
+            margin-top: 10px;
+            font-size: 20px;
+        }
+        .draggable-label {
+            position: absolute;
+            top: 25px;
+            font-size: 16px;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: none;
+            white-space: nowrap;
+        }
+        .x0-label {
+            position: absolute;
+            top: -30px;
+            font-size: 20px;
+            transform: translateX(-50%);
+            color: #2980b9;
+        }
+        .limit {
+            width: 2px;
+            height: 30px;
+            background: #2980b9;
+            position: absolute;
+            top: -10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="number-line" id="line1">
+            <div class="draggable" id="draggable1" style="left: 50%;">
+                <div class="draggable-label" id="draggable1-label"></div>
+            </div>
+        </div>
+        <div class="label" id="label1">拖动 x 显示结果</div>
+        
+        <div class="number-line" id="line2">
+            <div class="limit" id="limit-left" style="left: calc(50% - 100px);"></div>
+            <div class="draggable" id="draggable2-left" style="left: calc(50% - 100px);">
+                <div class="draggable-label" id="draggable2-left-label"></div>
+            </div>
+            <div class="limit" id="limit-right" style="left: calc(50% + 100px);"></div>
+            <div class="draggable" id="draggable2-right" style="left: calc(50% + 100px);">
+                <div class="draggable-label" id="draggable2-right-label"></div>
+            </div>
+            <div class="x0-label" id="x0-label">x<sub>0</sub></div>
+        </div>
+        <div class="label" id="label2-left"></div>
+        <div class="label" id="label2-right"></div>
+    </div>
+
+    <script>
+        const draggable1 = document.getElementById('draggable1');
+        const line1 = document.getElementById('line1');
+        const label1 = document.getElementById('label1');
+        const draggable1Label = document.getElementById('draggable1-label');
+
+        const draggable2Left = document.getElementById('draggable2-left');
+        const draggable2Right = document.getElementById('draggable2-right');
+        const line2 = document.getElementById('line2');
+        const label2Left = document.getElementById('label2-left');
+        const label2Right = document.getElementById('label2-right');
+
+        const draggable2LeftLabel = document.getElementById('draggable2-left-label');
+        const draggable2RightLabel = document.getElementById('draggable2-right-label');
+
+        const x0Label = document.getElementById('x0-label');
+        const x0Position = line2.offsetWidth / 2; // x0 在数轴中间
+
+        const limitLeft = document.getElementById('limit-left');
+        const limitRight = document.getElementById('limit-right');
+        const limitLeftPosition = x0Position - 100;
+        const limitRightPosition = x0Position + 100;
+
+        x0Label.style.left = `${x0Position}px`;
+
+        function drag(element, line, positiveMsg, negativeMsg, centerReset = false, limitStart = null, limitEnd = null, direction = null) {
+            function moveElement(newLeft) {
+                if (limitStart !== null && limitEnd !== null) {
+                    if (newLeft < limitStart) newLeft = limitStart;
+                    if (newLeft > limitEnd) newLeft = limitEnd;
+                } else {
+                    if (newLeft < 0) newLeft = 0;
+                    if (newLeft > line.offsetWidth) newLeft = line.offsetWidth;
+                }
+
+                element.style.left = newLeft + 'px';
+                element.querySelector('.draggable-label').style.left = '50%';
+
+                if (centerReset) {
+                    if (newLeft === line.offsetWidth) {
+                        setTimeout(() => {
+                            element.style.left = '50%';
+                            element.querySelector('.draggable-label').style.display = 'none';
+                        }, 500);
+                        element.querySelector('.draggable-label').textContent = positiveMsg;
+                        element.querySelector('.draggable-label').style.display = 'block';
+                    } else if (newLeft === 0) {
+                        setTimeout(() => {
+                            element.style.left = '50%';
+                            element.querySelector('.draggable-label').style.display = 'none';
+                        }, 500);
+                        element.querySelector('.draggable-label').textContent = negativeMsg;
+                        element.querySelector('.draggable-label').style.display = 'block';
+                    } else {
+                        element.querySelector('.draggable-label').style.display = 'none';
+                    }
+                } else {
+                    if (newLeft === x0Position) {
+                        setTimeout(() => {
+                            element.style.left = direction === 'left' ? `${limitStart}px` : `${limitEnd}px`;
+                            element.querySelector('.draggable-label').style.display = 'none';
+                        }, 500);
+                    } else if (direction === 'left' && newLeft < x0Position) {
+                        element.querySelector('.draggable-label').textContent = 'x → x₀⁻';
+                        element.querySelector('.draggable-label').style.display = 'block';
+                    } else if (direction === 'right' && newLeft > x0Position) {
+                        element.querySelector('.draggable-label').textContent = 'x → x₀⁺';
+                        element.querySelector('.draggable-label').style.display = 'block';
+                    } else {
+                        element.querySelector('.draggable-label').style.display = 'none';
+                    }
+                }
+            }
+
+            function onMouseMove(event) {
+                let newLeft = event.clientX - line.getBoundingClientRect().left;
+                moveElement(newLeft);
+            }
+
+            function onTouchMove(event) {
+                let touch = event.touches[0];
+                let newLeft = touch.clientX - line.getBoundingClientRect().left;
+                moveElement(newLeft);
+            }
+
+            element.addEventListener('mousedown', function (event) {
+                event.preventDefault();
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', function() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                }, { once: true });
+            });
+
+            element.addEventListener('touchstart', function (event) {
+                event.preventDefault();
+                document.addEventListener('touchmove', onTouchMove);
+                document.addEventListener('touchend', function() {
+                    document.removeEventListener('touchmove', onTouchMove);
+                }, { once: true });
+            });
+        }
+
+        drag(draggable1, line1, 'x → +∞', 'x → -∞', true);
+        drag(draggable2Left, line2, null, null, false, limitLeftPosition, x0Position, 'left');
+        drag(draggable2Right, line2, null, null, false, x0Position, limitRightPosition, 'right');
+    </script>
+</body>
+</html>
