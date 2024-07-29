@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Sequence Plots</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="plotly-latest.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <style>
@@ -42,6 +42,11 @@
 <body>
     <div class="container">
         <div class="slider-container">
+            <input type="range" min="1" max="100" value="50" id="nSlider0">
+            <div class="formula">\( x_n = n \)</div>
+            <div id="plot0" class="plot-container"></div>
+        </div>
+        <div class="slider-container">
             <input type="range" min="1" max="100" value="50" id="nSlider1">
             <div class="formula">\( x_n = \frac{n}{n+1} \)</div>
             <div id="plot1" class="plot-container"></div>
@@ -68,6 +73,9 @@
             let n = Array.from({ length: nMax }, (_, i) => i + 1);
             let x;
             switch(equation) {
+                case 'x0':
+                    x = n.map(ni => ni);
+                    break;
                 case 'x1':
                     x = n.map(ni => ni / (ni + 1));
                     break;
@@ -97,6 +105,10 @@
             });
         }
 
+        document.getElementById('nSlider0').oninput = function() {
+            updatePlot(this.value, 'plot0', 'x0', 'orange');
+        }
+
         document.getElementById('nSlider1').oninput = function() {
             updatePlot(this.value, 'plot1', 'x1', 'blue');
         }
@@ -114,6 +126,7 @@
         }
 
         // Initial plot
+        updatePlot(document.getElementById('nSlider0').value, 'plot0', 'x0', 'orange');
         updatePlot(document.getElementById('nSlider1').value, 'plot1', 'x1', 'blue');
         updatePlot(document.getElementById('nSlider2').value, 'plot2', 'x2', 'green');
         updatePlot(document.getElementById('nSlider3').value, 'plot3', 'x3', 'red');
