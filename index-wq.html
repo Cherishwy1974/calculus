@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无穷小量与无穷大量解释器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .input-section {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        select {
+            padding: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 5px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        canvas {
+            display: block;
+            margin: 20px auto;
+        }
+
+        #explanation {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+    <!-- 引入 Chart.js 和 MathJax 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.1"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>无穷小量与无穷大量解释器</h1>
+        <div class="input-section">
+            <label for="function-select">选择函数:</label>
+            <select id="function-select">
+                <option value="1/x">f(x) = 1/x</option>
+                <option value="x">f(x) = x</option>
+            </select>
+
+            <label for="approach-select">选择趋向:</label>
+            <select id="approach-select">
+                <option value="0">x → 0</option>
+                <option value="infinity">x → ∞</option>
+            </select>
+            
+            <button id="plot-btn">绘制图像</button>
+        </div>
+        <canvas id="chart" width="800" height="400"></canvas>
+        <p id="explanation"></p>
+    </div>
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Initialization of MathJax no longer needs specific options rendering
+});
+
+document.getElementById('plot-btn').addEventListener('click', plotFunction);
+
+let chart;
+
+function plotFunction() {
+    const funcSelect = document.getElementById('function-select').value;
+    const approach = document.getElementById('approach-select').value;
+    const ctx = document.getElementById('chart').getContext('2d');
+
+    const data = generateData(funcSelect, approach);
+    const explanation = generateExplanation(funcSelect, approach);
+
+    if (chart) {
+        chart.destroy();  // Destroy old chart instance to create a new one
+    }
+
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.x,
+            datasets: [{
+                label: `f(x) = ${funcSelect}`,
+                data: data.y,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false,
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'x'
+                    },
+                    min: data.xMin,
+                    max: data.xMax
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'f(x)'
+                    },
+                    min: data.yMin,
+                    max: data.yMax
+                }
+            },
+            plugins: {
+                annotation: {
+                    annotations: {
+                        xArrow: {
+                            type: 'line',
+                            xMin: data.xArrowStart.x,
+                            xMax: data.xArrowEnd.x,
+                            yMin: data.xArrowStart.y,
+                            yMax: data.xArrowEnd.y,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 2,
+                            borderDash: [], // Ensure solid line
+
+                            arrowHeads: {
+                                        end: {
+                                            type: 'triangle',
+                                            display: true,
+                                            fill: true,
+                                            backgroundColor: 'rgba(255, 99, 132, 1)',
+                                            size: 12
+                                        }
+                               
+                    },
+                    label: {
+                                        display: true,
+                                        content: 'x趋于' + (approach === '0' ? '0' : '∞'),
+                                        position: {
+                                            x: 'end',
+                                            y: 'start'
+                                        },
+                                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                                        color: 'black', // Ensure text color is visible
+                                        padding: {
+                                            top: 5,
+                                            bottom: 5,
+                                            left: 5,
+                                            right: 5
+                                        }
+                                    }
+                        },
+                        yArrow: {
+                            type: 'line',
+                            xMin: data.yArrowStart.x,
+                            xMax: data.yArrowEnd.x,
+                            yMin: data.yArrowStart.y,
+                            yMax: data.yArrowEnd.y,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 2,
+                            borderDash: [], // Ensure solid line
+                            arrowHeads: {
+                                        end: {
+                                            type: 'Circle',
+                                            display: true,
+                                            fill: true,
+                                            backgroundColor: 'rgba(54, 162, 235, 1)',
+                                            size: 12
+                                        }
+                    },
+                    label: {
+                                        display: true,
+                                        content: 'y趋于' + (funcSelect === '1/x' ? (approach === '0' ? '±∞' : '0') : (approach === '0' ? '0' : '∞')),
+                                        position: {
+                                            x: 'start',
+                                            y: 'end'
+                                        },
+                                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                        color: 'black', // Ensure text color is visible
+                                        padding: {
+                                            top: 5,
+                                            bottom: 5,
+                                            left: 5,
+                                            right: 5
+                                        }
+                        }
+                    }
+                    }
+                }
+            }
+        }
+    });
+
+    document.getElementById('explanation').innerHTML = explanation;
+    MathJax.typesetPromise(); // Ensure MathJax renders the explanation text
+}
+
+        function generateData(func, approach) {
+            const x = [];
+            const y = [];
+            let limit = null;
+            let limitText = '';
+
+            const range = getRange(approach);
+            for (let i = range.start; i <= range.end; i++) {
+                const xi = i / 10;
+                const yi = evaluateFunction(func, xi);
+                if (yi !== null) {
+                    x.push(xi);
+                    y.push(yi);
+                }
+            }
+
+            // Define arrow start and end points for x and y
+            let xArrowStart, xArrowEnd, yArrowStart, yArrowEnd, xArrowLabel, yArrowLabel;
+
+            if (func === '1/x' && approach === '0') {
+                // As x approaches 0 from both sides, f(x) approaches ±∞
+                xArrowStart = { x: 80, y: 2 };
+                xArrowEnd = { x: 60, y: 2 };
+                yArrowStart = { x: 70, y: 3  };
+                yArrowEnd = { x: 70, y: 8 };
+                xArrowLabel = 'x趋于0';
+                yArrowLabel = 'y趋于±∞';
+            } else if (func === '1/x' && approach === 'infinity') {
+                // As x approaches infinity, f(x) approaches 0
+                xArrowStart = { x: 65, y: 1 };
+                xArrowEnd = { x: 85, y: 1 };
+                yArrowStart = { x: 50, y: 3  };
+                yArrowEnd = { x: 50, y: 1 };
+                xArrowLabel = 'x趋于∞';
+                yArrowLabel = 'y趋于0';
+            } else if (func === 'x' && approach === '0') {
+                // As x approaches 0, f(x) approaches 0
+                xArrowStart = { x: 20, y: 2 };
+                xArrowEnd = { x: 40, y: 2 };
+                yArrowStart = { x: 50, y: 8  };
+                yArrowEnd = { x: 50, y: 3 };
+                xArrowLabel = 'x趋于0';
+                yArrowLabel = 'y趋于0';
+            } else if (func === 'x' && approach === 'infinity') {
+                // As x approaches infinity, f(x) approaches infinity
+                xArrowStart = { x: 60, y: 2 };
+                xArrowEnd = { x: 80, y: 2 };
+                yArrowStart = { x: 50, y: 6  };
+                yArrowEnd = { x: 50, y: 9 };
+                xArrowLabel = 'x趋于∞';
+                yArrowLabel = 'y趋于∞';
+            }
+
+            return {
+                x,
+                y,
+                xArrowStart,
+                xArrowEnd,
+                yArrowStart,
+                yArrowEnd,
+                xArrowLabel,
+                yArrowLabel
+            };
+        }
+
+        function evaluateFunction(func, x) {
+            switch (func) {
+                case '1/x':
+                    return x !== 0 ? 1 / x : null;
+                case 'x':
+                    return x;
+                default:
+                    return 0;
+            }
+        }
+
+        function getRange(approach) {
+            switch (approach) {
+                case '0':
+                    return { start: -50, end: 50 };
+                case 'infinity':
+                    return { start: 1, end: 100 };
+                default:
+                    return { start: -50, end: 50 };
+            }
+        }
+
+        function generateExplanation(func, approach) {
+            let explanation = '';
+            switch (func) {
+                case '1/x':
+                    if (approach === '0') {
+                        explanation = '函数 \\(f(x) = \\frac{1}{x}\\) 是无穷大量，当 \\(x \\to 0\\) 时，\\(f(x)\\) 趋于无穷大或负无穷大。';
+                    } else if (approach === 'infinity') {
+                        explanation = '函数 \\(f(x) = \\frac{1}{x}\\) 是无穷小量，当 \\(x \\to \\infty\\) 时，\\(f(x)\\) 趋于 0。';
+                    }
+                    break;
+                case 'x':
+                    if (approach === '0') {
+                        explanation = '函数 \\(f(x) = x\\) 是无穷小量，当 \\(x \\to 0\\) 时，\\(f(x)\\) 趋于 0。';
+                    } else if (approach === 'infinity') {
+                        explanation = '函数 \\(f(x) = x\\) 是无穷大量，当 \\(x \\to \\infty\\) 时，\\(f(x)\\) 趋于无穷大。';
+                    }
+                    break;
+            }
+
+            // 添加倒数关系的说明
+            explanation += '<br>在同一变化过程中，函数 \\(f(x)\\) 和 \\(\\frac{1}{f(x)}\\) 互为倒数，表现出无穷大与无穷小的关系：如果 \\(\\lim f(x) = 0\\) 或 \\(\\infty\\)，则 \\(\\lim \\frac{1}{f(x)} = \\infty\\) 或 \\(0\\)。';
+
+            return explanation;
+        }
+    </script>
+</body>
+</html>
