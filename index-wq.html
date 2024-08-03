@@ -7,19 +7,25 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: #f4f4f9;  /* Ensure background is not transparent */
             color: #333;
             margin: 0;
-            padding: 20px;
+            padding: 0;  /* Remove padding for full viewport effect */
+            display: flex;          /* Use Flexbox to center content */
+            justify-content: center; /* Center horizontally */
+            align-items: center;    /* Center vertically */
+            min-height: 100vh;      /* Full viewport height */
         }
 
         .container {
-            max-width: 800px;
+            max-width: 600px;       /* Fixed width for the container */
+            width: 100%;
             margin: auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            text-align: center;     /* Center text within the container */
         }
 
         h1 {
@@ -67,7 +73,6 @@
 </head>
 <body>
     <div class="container">
-        <h1>无穷小量与无穷大量解释器</h1>
         <div class="input-section">
             <label for="function-select">选择函数:</label>
             <select id="function-select">
