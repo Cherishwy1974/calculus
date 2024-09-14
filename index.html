@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>高等数学学习平台</title>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.2/css/all.min.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/jquery/2.0.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <style>
         body, html {
@@ -31,6 +30,7 @@
             display: flex;
             height: 100vh;
         }
+
         .category {
             margin-bottom: 30px;
             background: rgba(255, 255, 255, 0.3);
@@ -65,6 +65,7 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
         .sidebar {
             width: 300px;
             background-color: rgba(255, 255, 255, 0.5);
@@ -73,17 +74,11 @@
             overflow-y: auto;
             transition: transform 0.3s ease;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
         .sidebar.hidden {
             transform: translateX(-100%);
-        }
-
-        .buttons-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            padding: 10px;
         }
 
         .custom-btn {
@@ -133,16 +128,16 @@
 
         main {
             flex-grow: 1;
-            padding: 20px;
+            display: flex;
             transition: margin-left 0.3s ease;
         }
 
         #content-frame {
-            width: 100%;
-            height: calc(100vh - 40px);
+            flex-grow: 1;
             border: none;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin-left: 20px;
         }
 
         .dot {
@@ -154,148 +149,7 @@
             background-color: #ff4757;
             border-radius: 50%;
         }
-        .btn-8 {
-            line-height: 42px;
-            padding: 0;
-            border: none;
-            display: inline-block;
-            margin: 5px;
-            cursor: pointer;
-            color: #34495e;
-            font-weight: bold;
-        }
-        .btn-8 span {
-            position: relative;
-            display: block;
-            width: 100%;
-            height: 100%;
-            padding: 0 20px;
-        }
-        .btn-8:before,
-        .btn-8:after {
-            position: absolute;
-            content: "";
-            right: 0;
-            bottom: 0;
-            transition: all 0.3s ease;
-        }
-        .btn-8:before {
-            height: 0%;
-            width: 2px;
-        }
-        .btn-8:after {
-            width: 0%;
-            height: 2px;
-        }
-        .btn-8:hover:before {
-            height: 100%;
-        }
-        .btn-8:hover:after {
-            width: 100%;
-        }
-        .btn-8:hover {
-            background: transparent;
-        }
-        .btn-8 span:hover {
-            color: #3498db;
-        }
-        .btn-8 span:before,
-        .btn-8 span:after {
-            position: absolute;
-            content: "";
-            left: 0;
-            top: 0;
-            transition: all 0.3s ease;
-        }
-        .btn-8 span:before {
-            width: 2px;
-            height: 0%;
-        }
-        .btn-8 span:after {
-            height: 2px;
-            width: 0%;
-        }
-        .btn-8 span:hover:before {
-            height: 100%;
-        }
-        .btn-8 span:hover:after {
-            width: 100%;
-        }
-/* Add the missing @keyframes */
-@keyframes shiny-btn1 {
-    0% {
-        transform: scale(0) rotate(45deg);
-        opacity: 0;
-    }
-    80% {
-        transform: scale(0) rotate(45deg);
-        opacity: 0.5;
-    }
-    81% {
-        transform: scale(4) rotate(45deg);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(50) rotate(45deg);
-        opacity: 0;
-    }
-}
-
-
- 
     </style>
-        <script>
-            var colors = new Array(
-                [62, 35, 255],
-                [60, 255, 60],
-                [255, 35, 98],
-                [45, 175, 230],
-                [255, 0, 255],
-                [255, 128, 0]
-            );
-    
-            var step = 0;
-            var colorIndices = [0, 1, 2, 3];
-            var gradientSpeed = 0.002;
-    
-            function updateGradient() {
-                if ($ === undefined) return;
-    
-                var c0_0 = colors[colorIndices[0]];
-                var c0_1 = colors[colorIndices[1]];
-                var c1_0 = colors[colorIndices[2]];
-                var c1_1 = colors[colorIndices[3]];
-    
-                var istep = 1 - step;
-                var r1 = Math.round(istep * c0_0[0] + step * c0_1[0]);
-                var g1 = Math.round(istep * c0_0[1] + step * c0_1[1]);
-                var b1 = Math.round(istep * c0_0[2] + step * c0_1[2]);
-                var color1 = "rgb(" + r1 + "," + g1 + "," + b1 + ")";
-    
-                var r2 = Math.round(istep * c1_0[0] + step * c1_1[0]);
-                var g2 = Math.round(istep * c1_0[1] + step * c1_1[1]);
-                var b2 = Math.round(istep * c1_0[2] + step * c1_1[2]);
-                var color2 = "rgb(" + r2 + "," + g2 + "," + b2 + ")";
-    
-                $('#gradient').css({
-                    background: "-webkit-gradient(linear, left top, right top, from(" + color1 + "), to(" + color2 + "))"
-                }).css({
-                    background: "-moz-linear-gradient(left, " + color1 + " 0%, " + color2 + " 100%)"
-                });
-    
-                step += gradientSpeed;
-                if (step >= 1) {
-                    step %= 1;
-                    colorIndices[0] = colorIndices[1];
-                    colorIndices[2] = colorIndices[3];
-    
-                    colorIndices[1] = (colorIndices[1] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
-                    colorIndices[3] = (colorIndices[3] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
-                }
-            }
-    
-            setInterval(updateGradient, 10);
-        </script>
 </head>
 
 <body>
@@ -305,86 +159,85 @@
             <div class="category">
                 <h3>代数基础</h3>
                 <div class="buttons-grid">
-                    <a href="#" data-url="index-a.html"><button class="custom-btn btn-1">指数运算</button></a>
-                    <a href="#" data-url="index-log.html"><button class="custom-btn btn-2">对数运算</button></a>
-                    <a href="#" data-url="index-q.html"><button class="custom-btn btn-3">区间分类</button></a>
-                    <a href="#" data-url="index-hs.html"><button class="custom-btn btn-4">函数概念</button></a>
-                    <a href="#" data-url="index-f.html"><button class="custom-btn btn-5">反函数</button></a>
+                    <a href="#" data-url="index-a.html"><button class="custom-btn">指数运算</button></a>
+                    <a href="#" data-url="index-log.html"><button class="custom-btn">对数运算</button></a>
+                    <a href="#" data-url="index-q.html"><button class="custom-btn">区间分类</button></a>
+                    <a href="#" data-url="index-hs.html"><button class="custom-btn">函数概念</button></a>
+                    <a href="#" data-url="index-f.html"><button class="custom-btn">反函数</button></a>
                 </div>
             </div>
             
             <div class="category">
                 <h3>函数与极限</h3>
                 <div class="buttons-grid">
-                    <a href="#" data-url="index-sj.html"><button class="custom-btn btn-6">数列极限</button></a>
-                    <a href="#" data-url="index-sj2.html"><button class="custom-btn btn-7">数列极限案例</button></a>
-                    <a href="#" data-url="index-hj.html"><button class="custom-btn btn-8">X趋向</button></a>
-                    <a href="#" data-url="index-wq.html"><button class="custom-btn btn-9">无穷大量与无穷小量</button></a>
-                    <a href="#" data-url="index-hslxx.html"><button class="custom-btn btn-10">函数增量</button></a>
+                    <a href="#" data-url="index-sj.html"><button class="custom-btn">数列极限</button></a>
+                    <a href="#" data-url="index-sj2.html"><button class="custom-btn">数列极限案例</button></a>
+                    <a href="#" data-url="index-hj.html"><button class="custom-btn">X趋向</button></a>
+                    <a href="#" data-url="index-wq.html"><button class="custom-btn">无穷大量与无穷小量</button></a>
+                    <a href="#" data-url="index-hslxx.html"><button class="custom-btn">函数增量</button></a>
                 </div>
             </div>
         
             <div class="category">
                 <h3>导数与微分</h3>
                 <div class="buttons-grid">
-                    <a href="#" data-url="index-dsjhyy.html"><button class="custom-btn btn-11">导数的几何意义</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-12">导数定义</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-13">求导法则</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-14">高阶导数</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-15">隐函数求导</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-16">参数方程求导</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-17">函数微分</button></a>
+                    <a href="#" data-url="index-dsjhyy.html"><button class="custom-btn">导数的几何意义</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">导数定义</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">求导法则</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">高阶导数</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">隐函数求导</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">参数方程求导</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">函数微分</button></a>
                 </div>
             </div>
         
             <div class="category">
                 <h3>微分中值定理与导数应用</h3>
                 <div class="buttons-grid">
-                    <a href="#" data-url="#"><button class="custom-btn btn-18">中值定理</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-19">洛必达法则</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-20">泰勒公式</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-21">函数极值</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-22">曲线凹凸性</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-23">渐近线</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-24">曲线描绘</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">中值定理</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">洛必达法则</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">泰勒公式</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">函数极值</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">曲线凹凸性</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">渐近线</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">曲线描绘</button></a>
                 </div>
             </div>
         
             <div class="category">
                 <h3>积分学</h3>
                 <div class="buttons-grid">
-                    <a href="#" data-url="#"><button class="custom-btn btn-25">不定积分</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-26">换元积分法</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-27">分部积分法</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-28">有理函数积分</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-29">定积分定义</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-30">牛顿-莱布尼茨公式</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-31">定积分的换元法</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-32">定积分的分部积分法</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-33">反常积分</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-34">定积分的应用</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">不定积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">换元积分法</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">分部积分法</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">有理函数积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">定积分定义</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">牛顿-莱布尼茨公式</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">定积分的换元法</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">定积分的分部积分法</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">反常积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">定积分的应用</button></a>
                 </div>
             </div>
         
             <div class="category">
                 <h3>多元函数微积分</h3>
                 <div class="buttons-grid">
-                    <a href="#" data-url="#"><button class="custom-btn btn-35">多元函数微分学</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-36">重积分</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-37">曲线积分</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-38">曲面积分</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-39">数量场和向量场</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">多元函数微分学</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">重积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">曲线积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">曲面积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">数量场和向量场</button></a>
                 </div>
             </div>
         
             <div class="category">
                 <h3>无穷级数</h3>
                 <div class="buttons-grid">
-                    <a href="#" data-url="#"><button class="custom-btn btn-40">级数</button></a>
-                    <a href="#" data-url="#"><button class="custom-btn btn-41">幂级数</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">级数</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">幂级数</button></a>
                 </div>
             </div>
-        </div>
         </div>
         <main id="main-content">
             <iframe id="content-frame" src=""></iframe>
@@ -393,43 +246,87 @@
     <button class="sidebar-toggle" id="sidebar-toggle">
         <i class="fas fa-bars"></i>
     </button>
-    <script>
-        for (let i = 1; i <= 42; i++) {
-            // Generate a unique color using HSL
-            let hue = (i * 360 / 42); // Distribute hues evenly across the color wheel
-            let color = `hsl(${hue}, 70%, 60%)`;
 
-            document.write(`<button class="btn-8" style="background-color: ${color}; background-image: linear-gradient(315deg, ${color} 0%, #c797eb 74%);"><span>Button ${i}</span></button>`);
-        }
-    </script>
     <script>
+        var colors = new Array(
+            [62, 35, 255],
+            [60, 255, 60],
+            [255, 35, 98],
+            [45, 175, 230],
+            [255, 0, 255],
+            [255, 128, 0]
+        );
+
+        var step = 0;
+        var colorIndices = [0, 1, 2, 3];
+        var gradientSpeed = 0.002;
+
+        function updateGradient() {
+            if ($ === undefined) return;
+
+            var c0_0 = colors[colorIndices[0]];
+            var c0_1 = colors[colorIndices[1]];
+            var c1_0 = colors[colorIndices[2]];
+            var c1_1 = colors[colorIndices[3]];
+
+            var istep = 1 - step;
+            var r1 = Math.round(istep * c0_0[0] + step * c0_1[0]);
+            var g1 = Math.round(istep * c0_0[1] + step * c0_1[1]);
+            var b1 = Math.round(istep * c0_0[2] + step * c0_1[2]);
+            var color1 = "rgb(" + r1 + "," + g1 + "," + b1 + ")";
+
+            var r2 = Math.round(istep * c1_0[0] + step * c1_1[0]);
+            var g2 = Math.round(istep * c1_0[1] + step * c1_1[1]);
+            var b2 = Math.round(istep * c1_0[2] + step * c1_1[2]);
+            var color2 = "rgb(" + r2 + "," + g2 + "," + b2 + ")";
+
+            $('#gradient').css({
+                background: "-webkit-gradient(linear, left top, right top, from(" + color1 + "), to(" + color2 + "))"
+            }).css({
+                background: "-moz-linear-gradient(left, " + color1 + " 0%, " + color2 + " 100%)"
+            });
+
+            step += gradientSpeed;
+            if (step >= 1) {
+                step %= 1;
+                colorIndices[0] = colorIndices[1];
+                colorIndices[2] = colorIndices[3];
+
+                colorIndices[1] = (colorIndices[1] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
+                colorIndices[3] = (colorIndices[3] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
+            }
+        }
+
+        setInterval(updateGradient, 10);
+
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const mainContent = document.getElementById('main-content');
         const contentFrame = document.getElementById('content-frame');
-    
+
         sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('hidden');
             mainContent.classList.toggle('shifted');
         });
-    
+
         document.querySelectorAll('.buttons-grid a').forEach(link => {
             let clickCount = 0;
             let clickTimer = null;
-    
+
             link.addEventListener('click', (event) => {
                 event.preventDefault();
                 const url = link.getAttribute('data-url');
-    
+
                 if (!url || url === '#') {
                     console.log('此按钮未设置URL');
                     return;
                 }
-    
+
                 clickCount++;
-    
+
                 if (clickCount === 1) {
                     clickTimer = setTimeout(() => {
+                        contentFrame.style.display = 'block'; // 确保iframe可见
                         contentFrame.setAttribute('src', url);
                         clickCount = 0;
                     }, 300);
@@ -440,6 +337,9 @@
                 }
             });
         });
+
+        // 确保内容框架初始时是隐藏的
+        contentFrame.style.display = 'none';
     </script>
 </body>
 </html>
