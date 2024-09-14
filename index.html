@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高等数学学习平台</title>
+    <link rel="stylesheet" href="all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap" rel="stylesheet">
+    <script src="jquery.min.js"></script>
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Lato', sans-serif;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .category {
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .category h3 {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .custom-btn {
+            width: 100%;
+            height: 60px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #2c3e50;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .custom-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: #3498db;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(5px);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            transition: margin-left 0.3s ease;
+        }
+
+        #content-frame {
+            flex-grow: 1;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin-left: 20px;
+        }
+
+        .dot {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 10px;
+            height: 10px;
+            background-color: #ff4757;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="gradient"></div>
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <div class="category">
+                <h3>代数基础</h3>
+                <div class="buttons-grid">
+                    <a href="#" data-url="index-a.html"><button class="custom-btn">指数运算</button></a>
+                    <a href="#" data-url="index-log.html"><button class="custom-btn">对数运算</button></a>
+                    <a href="#" data-url="index-q.html"><button class="custom-btn">区间分类</button></a>
+                    <a href="#" data-url="index-hs.html"><button class="custom-btn">函数概念</button></a>
+                    <a href="#" data-url="index-f.html"><button class="custom-btn">反函数</button></a>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h3>函数与极限</h3>
+                <div class="buttons-grid">
+                    <a href="#" data-url="index-sj.html"><button class="custom-btn">数列极限</button></a>
+                    <a href="#" data-url="index-sj2.html"><button class="custom-btn">数列极限案例</button></a>
+                    <a href="#" data-url="index-hj.html"><button class="custom-btn">X趋向</button></a>
+                    <a href="#" data-url="index-wq.html"><button class="custom-btn">无穷大量与无穷小量</button></a>
+                    <a href="#" data-url="index-hslxx.html"><button class="custom-btn">函数增量</button></a>
+                </div>
+            </div>
+        
+            <div class="category">
+                <h3>导数与微分</h3>
+                <div class="buttons-grid">
+                    <a href="#" data-url="index-dsjhyy.html"><button class="custom-btn">导数的几何意义</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">导数定义</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">求导法则</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">高阶导数</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">隐函数求导</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">参数方程求导</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">函数微分</button></a>
+                </div>
+            </div>
+        
+            <div class="category">
+                <h3>微分中值定理与导数应用</h3>
+                <div class="buttons-grid">
+                    <a href="#" data-url="#"><button class="custom-btn">中值定理</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">洛必达法则</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">泰勒公式</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">函数极值</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">曲线凹凸性</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">渐近线</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">曲线描绘</button></a>
+                </div>
+            </div>
+        
+            <div class="category">
+                <h3>积分学</h3>
+                <div class="buttons-grid">
+                    <a href="#" data-url="#"><button class="custom-btn">不定积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">换元积分法</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">分部积分法</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">有理函数积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">定积分定义</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">牛顿-莱布尼茨公式</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">定积分的换元法</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">定积分的分部积分法</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">反常积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">定积分的应用</button></a>
+                </div>
+            </div>
+        
+            <div class="category">
+                <h3>多元函数微积分</h3>
+                <div class="buttons-grid">
+                    <a href="#" data-url="#"><button class="custom-btn">多元函数微分学</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">重积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">曲线积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">曲面积分</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">数量场和向量场</button></a>
+                </div>
+            </div>
+        
+            <div class="category">
+                <h3>无穷级数</h3>
+                <div class="buttons-grid">
+                    <a href="#" data-url="#"><button class="custom-btn">级数</button></a>
+                    <a href="#" data-url="#"><button class="custom-btn">幂级数</button></a>
+                </div>
+            </div>
+        </div>
+        <main id="main-content">
+            <iframe id="content-frame" src=""></iframe>
+        </main>
+    </div>
+    <button class="sidebar-toggle" id="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <script>
+        var colors = new Array(
+            [62, 35, 255],
+            [60, 255, 60],
+            [255, 35, 98],
+            [45, 175, 230],
+            [255, 0, 255],
+            [255, 128, 0]
+        );
+
+        var step = 0;
+        var colorIndices = [0, 1, 2, 3];
+        var gradientSpeed = 0.002;
+
+        function updateGradient() {
+            if ($ === undefined) return;
+
+            var c0_0 = colors[colorIndices[0]];
+            var c0_1 = colors[colorIndices[1]];
+            var c1_0 = colors[colorIndices[2]];
+            var c1_1 = colors[colorIndices[3]];
+
+            var istep = 1 - step;
+            var r1 = Math.round(istep * c0_0[0] + step * c0_1[0]);
+            var g1 = Math.round(istep * c0_0[1] + step * c0_1[1]);
+            var b1 = Math.round(istep * c0_0[2] + step * c0_1[2]);
+            var color1 = "rgb(" + r1 + "," + g1 + "," + b1 + ")";
+
+            var r2 = Math.round(istep * c1_0[0] + step * c1_1[0]);
+            var g2 = Math.round(istep * c1_0[1] + step * c1_1[1]);
+            var b2 = Math.round(istep * c1_0[2] + step * c1_1[2]);
+            var color2 = "rgb(" + r2 + "," + g2 + "," + b2 + ")";
+
+            $('#gradient').css({
+                background: "-webkit-gradient(linear, left top, right top, from(" + color1 + "), to(" + color2 + "))"
+            }).css({
+                background: "-moz-linear-gradient(left, " + color1 + " 0%, " + color2 + " 100%)"
+            });
+
+            step += gradientSpeed;
+            if (step >= 1) {
+                step %= 1;
+                colorIndices[0] = colorIndices[1];
+                colorIndices[2] = colorIndices[3];
+
+                colorIndices[1] = (colorIndices[1] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
+                colorIndices[3] = (colorIndices[3] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
+            }
+        }
+
+        setInterval(updateGradient, 10);
+
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const mainContent = document.getElementById('main-content');
+        const contentFrame = document.getElementById('content-frame');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.buttons-grid a').forEach(link => {
+            let clickCount = 0;
+            let clickTimer = null;
+
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const url = link.getAttribute('data-url');
+
+                if (!url || url === '#') {
+                    console.log('此按钮未设置URL');
+                    return;
+                }
+
+                clickCount++;
+
+                if (clickCount === 1) {
+                    clickTimer = setTimeout(() => {
+                        contentFrame.style.display = 'block'; // 确保iframe可见
+                        contentFrame.setAttribute('src', url);
+                        clickCount = 0;
+                    }, 300);
+                } else if (clickCount === 2) {
+                    clearTimeout(clickTimer);
+                    window.location.href = url;
+                    clickCount = 0;
+                }
+            });
+        });
+
+        // 确保内容框架初始时是隐藏的
+        contentFrame.style.display = 'none';
+    </script>
+</body>
+</html>

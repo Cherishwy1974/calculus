@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>区间交互示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e0e5ec00;
+            justify-content: center;
+        }
+        
+        .container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 7px 7px 20px #cbced1, -7px -7px 20px #ffffff;
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        input[type="range"] {
+            width: 80%;
+            margin: 10px 0;
+        }
+
+        .intervals {
+            margin: 20px 0;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            box-shadow: 5px 5px 10px #b8b9be, -5px -5px 10px #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        button.active {
+            background-color: #218838;
+            box-shadow: inset 5px 5px 10px #b8b9be, inset -5px -5px 10px #ffffff;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .number-line {
+            position: relative;
+            width: 100%;
+            height: 50px;
+            margin: 20px auto;
+            border-top: 2px solid #999;
+        }
+
+        .number-line::before, .number-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 1px;
+            height: 10px;
+            background-color: #999;
+        }
+
+        .number-line::before {
+            left: 0;
+        }
+
+        .number-line::after {
+            right: 0;
+        }
+
+        .number-line span {
+            position: absolute;
+            top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .range-indicator {
+            position: absolute;
+            top: -15px;
+            height: 30px;
+            background-color: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+            border-radius: 10px;
+        }
+
+        .point-a, .point-b {
+            position: absolute;
+            top: -15px;
+            width: 30px;
+            height: 30px;
+            background-color: #28a745;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 5px 5px 10px #b8b9be, -5px -5px 10px #ffffff;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .infinity-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin: 10px auto;
+        }
+
+        .checkboxes {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>区间交互示例</h1>
+        
+        <label for="slider1">选择区间起点 a：</label>
+        <input type="range" id="slider1" min="-100" max="100" value="0">
+        <span id="value1">0</span>
+        <div class="infinity-buttons">
+            <button id="infinity-negative" onclick="toggleInfinity('slider1', '-∞', 'infinity-negative')">-∞</button>
+        </div>
+        <div class="checkboxes">
+            <label><input type="checkbox" id="open-a"> 开区间</label>
+            <label><input type="checkbox" id="closed-a"> 闭区间</label>
+        </div>
+
+        <label for="slider2">选择区间终点 b：</label>
+        <input type="range" id="slider2" min="-100" max="100" value="0">
+        <span id="value2">0</span>
+        <div class="infinity-buttons">
+            <button id="infinity-positive" onclick="toggleInfinity('slider2', '∞', 'infinity-positive')">∞</button>
+        </div>
+        <div class="checkboxes">
+            <label><input type="checkbox" id="open-b"> 开区间</label>
+            <label><input type="checkbox" id="closed-b"> 闭区间</label>
+        </div>
+
+        <div class="number-line">
+            <div class="range-indicator" id="range-indicator"></div>
+            <div class="point-a" id="point-a" draggable="true"></div>
+            <div class="point-b" id="point-b" draggable="true"></div>
+            <span style="left: 0;">-100</span>
+            <span style="left: 50%;">0</span>
+            <span style="right: 0;">100</span>
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('slider1').addEventListener('input', function () {
+            document.getElementById('value1').innerText = this.value;
+            updatePoints();
+        });
+
+        document.getElementById('slider2').addEventListener('input', function () {
+            document.getElementById('value2').innerText = this.value;
+            updatePoints();
+        });
+
+        document.getElementById('open-a').addEventListener('change', function () {
+            document.getElementById('closed-a').checked = false;
+            updatePoints();
+        });
+
+        document.getElementById('closed-a').addEventListener('change', function () {
+            document.getElementById('open-a').checked = false;
+            updatePoints();
+        });
+
+        document.getElementById('open-b').addEventListener('change', function () {
+            document.getElementById('closed-b').checked = false;
+            updatePoints();
+        });
+
+        document.getElementById('closed-b').addEventListener('change', function () {
+            document.getElementById('open-b').checked = false;
+            updatePoints();
+        });
+
+        function toggleInfinity(sliderId, value, buttonId) {
+            const slider = document.getElementById(sliderId);
+            const button = document.getElementById(buttonId);
+
+            if (slider.getAttribute('data-infinity') === value) {
+                slider.removeAttribute('data-infinity');
+                button.classList.remove('active');
+            } else {
+                slider.setAttribute('data-infinity', value);
+                button.classList.add('active');
+            }
+            
+            document.getElementById(sliderId === 'slider1' ? 'value1' : 'value2').innerText = slider.getAttribute('data-infinity') || slider.value;
+            updatePoints();
+        }
+
+        function updatePoints() {
+            const a = document.getElementById('slider1').getAttribute('data-infinity') || document.getElementById('slider1').value;
+            const b = document.getElementById('slider2').getAttribute('data-infinity') || document.getElementById('slider2').value;
+            const rangeIndicator = document.getElementById('range-indicator');
+            const pointA = document.getElementById('point-a');
+            const pointB = document.getElementById('point-b');
+
+            const range = document.querySelector('.number-line').offsetWidth;
+            const min = -100;
+            const max = 100;
+
+            const posA = (a === '-∞') ? 0 : (a === '∞') ? range : ((parseInt(a) - min) / (max - min)) * range;
+            const posB = (b === '-∞') ? 0 : (b === '∞') ? range : ((parseInt(b) - min) / (max - min)) * range;
+
+            pointA.style.left = `${posA}px`;
+            pointB.style.left = `${posB}px`;
+
+            rangeIndicator.style.left = `${Math.min(posA, posB)}px`;
+            rangeIndicator.style.width = `${Math.abs(posB - posA)}px`;
+
+            showInterval();
+        }
+
+        function showInterval() {
+            const a = document.getElementById('slider1').getAttribute('data-infinity') || document.getElementById('slider1').value;
+            const b = document.getElementById('slider2').getAttribute('data-infinity') || document.getElementById('slider2').value;
+
+            let openA = document.getElementById('open-a').checked ? '(' : '';
+            let closeB = document.getElementById('open-b').checked ? ')' : '';
+            let inequalityResult = '';
+
+            if (a !== '-∞' && document.getElementById('open-a').checked) {
+                inequalityResult += `${a} < x `;
+            } else if (a !== '-∞' && document.getElementById('closed-a').checked) {
+                inequalityResult += `${a} ≤ x `;
+            } else if (a === '-∞' && (document.getElementById('open-a').checked || document.getElementById('closed-a').checked)) {
+                inequalityResult += 'x ';
+            }
+
+            if (b !== '∞' && document.getElementById('open-b').checked) {
+                inequalityResult += `< ${b}`;
+            } else if (b !== '∞' && document.getElementById('closed-b').checked) {
+                inequalityResult += `≤ ${b}`;
+            } else if (b === '∞' && (document.getElementById('open-b').checked || document.getElementById('closed-b').checked)) {
+                inequalityResult += '';
+            }
+
+            const intervalResult = `${openA}${a}, ${b}${closeB}`;
+            
+            document.getElementById('result').innerHTML = `
+                当前区间: ${intervalResult} <br>
+                不等式形式: ${inequalityResult || '未选择开闭区间'}
+            `;
+        }
+    </script>
+</body>
+</html>
+
