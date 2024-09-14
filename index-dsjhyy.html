@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>函数和切线演示</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/babel-standalone/7.0.0-beta.3/babel.min.js"></script>
+    <script src="https://gw.alipayobjects.com/os/lib/antv/g2/4.1.40/dist/g2.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #ebdddd00;
+        }
+        #root {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #chart {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        function FunctionTangentDemo() {
+            const [a, setA] = useState(0);
+            const chartRef = useRef(null);
+            const chartInstanceRef = useRef(null);
+
+            const f = (x) => x * x;
+            const derivative = (a) => 2 * a;
+
+            useEffect(() => {
+                if (chartRef.current) {
+                    if (!chartInstanceRef.current) {
+                        chartInstanceRef.current = new G2.Chart({
+                            container: chartRef.current,
+                            autoFit: true,
+                            height: 400,
+                        });
+                    }
+
+                    const chart = chartInstanceRef.current;
+                    chart.clear();
+
+                    const data = [];
+                    for (let x = -5; x <= 5; x += 0.1) {
+                        data.push({ x, y: f(x), type: '函数' });
+                    }
+
+                    const m = derivative(a);
+                    const b = f(a) - m * a;
+                    data.push({ x: a - 1, y: m * (a - 1) + b, type: '切线' });
+                    data.push({ x: a, y: f(a), type: '切线' });
+                    data.push({ x: a + 1, y: m * (a + 1) + b, type: '切线' });
+
+                    chart.data(data);
+                    chart.scale({
+                        x: { nice: true },
+                        y: { nice: true },
+                    });
+
+                    chart.line().position('x*y').color('type', ['#8884d8', '#82ca9d']).shape('type', ['line', 'line']);
+                    chart.render();
+                }
+
+                // 重新渲染MathJax
+                if (window.MathJax) {
+                    window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
+                }
+            }, [a]);
+
+            return (
+                <div>
+                    <h2 style={{ fontSize: '24px', marginBottom: '20px' }}>函数和切线演示</h2>
+                    <div style={{ marginBottom: '20px' }}>
+                        <label htmlFor="a-slider" style={{ marginRight: '10px' }}>a 的值：</label>
+                        <input
+                            id="a-slider"
+                            type="range"
+                            min="-5"
+                            max="5"
+                            step="0.1"
+                            value={a}
+                            onChange={(e) => setA(parseFloat(e.target.value))}
+                            style={{ width: '300px', verticalAlign: 'middle' }}
+                        />
+                        <span style={{ marginLeft: '10px' }}>{a.toFixed(1)}</span>
+                    </div>
+                    <div id="chart" ref={chartRef}></div>
+                    <div>
+                        <p>函数：\(f(x) = x^2\)</p>
+                        <p>在 \(x = {a.toFixed(1)}\) 处的切线斜率：{derivative(a).toFixed(2)}</p>
+                        <p>切线方程：\(y - {f(a).toFixed(2)} = {derivative(a).toFixed(2)}(x - {a.toFixed(1)})\)</p>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<FunctionTangentDemo />, document.getElementById('root'));
+    </script>
+</body>
+</html>
